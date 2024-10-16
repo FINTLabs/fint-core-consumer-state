@@ -1,12 +1,15 @@
 package no.fintlabs.consumer.state
 
 import no.fintlabs.consumer.state.service.ConsumerStateService
+import org.springframework.http.HttpStatus
+import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.PutMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RestController
+import org.springframework.web.server.ResponseStatusException
 
 @RestController
 class ConsumerStateController(
@@ -22,11 +25,13 @@ class ConsumerStateController(
         consumerStateService.addConsumerState(consumerState)
 
     @PutMapping("/{id}")
-    fun updateConsumerState(@RequestBody consumerState: ConsumerState, @PathVariable id: String) =
-        consumerStateService.updateConsumerState(consumerState, id)
     fun updateConsumerState(@RequestBody consumerStateUpdate: ConsumerStateUpdate, @PathVariable id: String): ConsumerState =
         consumerStateService.updateConsumerState(consumerStateUpdate, id)
             .orElseThrow{ ResponseStatusException(HttpStatus.NOT_FOUND) }
 
+    @DeleteMapping("/{id}")
+    fun deleteConsumerState(@PathVariable id: String): ConsumerState =
+        consumerStateService.deleteConsumerState(id)
+            .orElseThrow { ResponseStatusException(HttpStatus.NOT_FOUND) }
 
 }

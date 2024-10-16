@@ -4,6 +4,7 @@ import no.fintlabs.consumer.state.ConsumerState
 import no.fintlabs.consumer.state.ConsumerStateRepository
 import no.fintlabs.consumer.state.ConsumerStateUpdate
 import org.springframework.stereotype.Service
+import java.util.*
 
 @Service
 class ConsumerStateService(
@@ -24,12 +25,10 @@ class ConsumerStateService(
             consumerStateRepository.save(existingState)
         }
 
-    fun updateConsumerState(consumerState: ConsumerState, id: String) {
-        consumerStateValidationService.validateConsumerState(consumerState)
-        consumerStateRepository.findById(id).let {
 
+    fun deleteConsumerState(id: String): Optional<ConsumerState> =
+        consumerStateRepository.findById(id).also {
+            it.ifPresent { consumerStateRepository.deleteById(id) }
         }
-    }
-
 
 }
