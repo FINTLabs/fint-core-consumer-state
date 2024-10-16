@@ -1,6 +1,6 @@
 package no.fintlabs.consumer.state.service
 
-import no.fintlabs.consumer.state.ConsumerState
+import no.fintlabs.consumer.state.model.ConsumerState
 import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Service
 import org.springframework.web.server.ResponseStatusException

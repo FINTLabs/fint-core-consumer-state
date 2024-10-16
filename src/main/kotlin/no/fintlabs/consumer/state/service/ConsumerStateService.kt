@@ -1,8 +1,8 @@
 package no.fintlabs.consumer.state.service
 
-import no.fintlabs.consumer.state.ConsumerState
+import no.fintlabs.consumer.state.model.ConsumerState
 import no.fintlabs.consumer.state.ConsumerStateRepository
-import no.fintlabs.consumer.state.ConsumerStateUpdate
+import no.fintlabs.consumer.state.model.ConsumerStateUpdate
 import org.springframework.stereotype.Service
 import java.util.*
 

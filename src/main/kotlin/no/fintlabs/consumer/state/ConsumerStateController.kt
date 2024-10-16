@@ -1,5 +1,7 @@
 package no.fintlabs.consumer.state
 
+import no.fintlabs.consumer.state.model.ConsumerState
+import no.fintlabs.consumer.state.model.ConsumerStateUpdate
 import no.fintlabs.consumer.state.service.ConsumerStateService
 import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.DeleteMapping

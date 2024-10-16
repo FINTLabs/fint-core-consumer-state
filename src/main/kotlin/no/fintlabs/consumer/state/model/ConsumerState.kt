@@ -1,4 +1,4 @@
-package no.fintlabs.consumer.state
+package no.fintlabs.consumer.state.model
 
 import jakarta.persistence.ElementCollection
 import jakarta.persistence.Entity
