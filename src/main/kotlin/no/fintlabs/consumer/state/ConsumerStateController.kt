@@ -24,5 +24,9 @@ class ConsumerStateController(
     @PutMapping("/{id}")
     fun updateConsumerState(@RequestBody consumerState: ConsumerState, @PathVariable id: String) =
         consumerStateService.updateConsumerState(consumerState, id)
+    fun updateConsumerState(@RequestBody consumerStateUpdate: ConsumerStateUpdate, @PathVariable id: String): ConsumerState =
+        consumerStateService.updateConsumerState(consumerStateUpdate, id)
+            .orElseThrow{ ResponseStatusException(HttpStatus.NOT_FOUND) }
+
 
 }
