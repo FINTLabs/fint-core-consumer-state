@@ -15,7 +15,7 @@ class ConsumerStateService(
     fun getConsumerStates(): Collection<ConsumerState> = consumerStateRepository.findAll()
 
     fun addConsumerState(consumerState: ConsumerState): ConsumerState {
-        consumerStateValidationService.validateConsumerState(consumerState)
+//        consumerStateValidationService.validateConsumerState(consumerState)
         return consumerStateRepository.save(consumerState)
     }
 
