@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.PutMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RestController
 import org.springframework.web.server.ResponseStatusException
+import org.springframework.web.server.ServerWebExchange
 import java.net.URI
 
 @RestController
@@ -26,9 +27,9 @@ class ConsumerStateController(
     fun getStates(): Collection<ConsumerState> = consumerStateService.getConsumerStates()
 
     @PostMapping
-    fun addConsumerState(@RequestBody consumerState: ConsumerState, request: ServerHttpRequest): ResponseEntity<ConsumerState> =
+    fun addConsumerState(@RequestBody consumerState: ConsumerState, request: ServerWebExchange): ResponseEntity<ConsumerState> =
         consumerStateService.addConsumerState(consumerState).let {
-            ResponseEntity.created(URI.create("${request.uri}/${it.id}")).body(it)
+            ResponseEntity.created(URI.create("${request.request.uri}${it.id}")).body(it)
         }
 
 
