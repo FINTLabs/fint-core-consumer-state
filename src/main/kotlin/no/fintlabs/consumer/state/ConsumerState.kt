@@ -5,5 +5,6 @@ data class ConsumerState(
     val `package`: String,
     val org: String,
     val version: String,
-    var managed: Boolean
+    val env: Map<String, String> = mutableMapOf(),
+    var managed: Boolean? = true,
 )
