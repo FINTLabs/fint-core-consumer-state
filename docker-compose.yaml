@@ -10,6 +10,12 @@ services:
     ports:
       - "5432:5432"
     restart: unless-stopped
+  metamodel:
+    image: ghcr.io/fintlabs/fint-core-consumer-metamodel:latest
+    networks:
+      - network-bridge
+    ports:
+      - 8082:8080
 networks:
-  broker-kafka:
+  network-bridge:
     driver: bridge
