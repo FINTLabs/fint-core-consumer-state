@@ -18,7 +18,7 @@ class ConsumerStateController(
         consumerStateService.getConsumerStates()
 
     @PostMapping
-    fun addConsumerState(@RequestBody consumerState: ConsumerState) =
+    fun addConsumerState(@RequestBody consumerState: ConsumerState): ConsumerState =
         consumerStateService.addConsumerState(consumerState)
 
     @PutMapping("/{id}")
