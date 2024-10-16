@@ -16,6 +16,10 @@ java {
 }
 
 repositories {
+	mavenLocal()
+	maven {
+	    url("https://repo.fintlabs.no/releases")
+	}
 	mavenCentral()
 }
 
