@@ -31,4 +31,6 @@ class ConsumerStateService(
             it.ifPresent { consumerStateRepository.deleteById(id) }
         }
 
+    fun resetAllData() = consumerStateRepository.deleteAll()
+
 }

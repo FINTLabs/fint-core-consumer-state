@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity
 import org.springframework.http.server.ServerHttpRequest
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
+import org.springframework.web.bind.annotation.PatchMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.PutMapping
@@ -32,7 +33,6 @@ class ConsumerStateController(
             ResponseEntity.created(URI.create("${request.request.uri}${it.id}")).body(it)
         }
 
-
     @PutMapping("/{id}")
     fun updateConsumerState(@RequestBody consumerStateUpdate: ConsumerStateUpdate, @PathVariable id: String): ConsumerState =
         consumerStateService.updateConsumerState(consumerStateUpdate, id)
@@ -42,5 +42,9 @@ class ConsumerStateController(
     fun deleteConsumerState(@PathVariable id: String): ConsumerState =
         consumerStateService.deleteConsumerState(id)
             .orElseThrow { ResponseStatusException(HttpStatus.NOT_FOUND) }
+
+    // TODO: Temporary, get rid of this in production
+    @PatchMapping
+    fun resetAllData() = consumerStateService.resetAllData()
 
 }
