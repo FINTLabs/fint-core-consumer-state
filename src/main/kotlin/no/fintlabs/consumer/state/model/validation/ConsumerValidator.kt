@@ -29,7 +29,7 @@ class ConsumerValidator(
     }
 
     private fun validateComponent(domain: String, `package`: String) {
-        if (metadataRepository.containsComponent(domain, `package`))
+        if (!metadataRepository.containsComponent(domain, `package`))
            throw InvalidConsumerException("Component: '$domain-$`package`' does not exist")
     }
 
