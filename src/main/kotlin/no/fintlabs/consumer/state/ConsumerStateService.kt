@@ -1,10 +1,9 @@
 package no.fintlabs.consumer.state
 
-import no.fintlabs.consumer.state.model.interfaces.ConsumerIdentification
 import no.fintlabs.consumer.state.model.ConsumerEntity
 import no.fintlabs.consumer.state.model.ConsumerRequest
 import no.fintlabs.consumer.state.model.ConsumerUpdateRequest
-import org.springframework.data.jpa.domain.AbstractPersistable_.id
+import no.fintlabs.consumer.state.model.interfaces.ConsumerIdentification
 import org.springframework.stereotype.Service
 import java.util.*
 
@@ -24,9 +23,11 @@ class ConsumerStateService(
             it.copy(
                 version = consumerUpdateRequest.version ?: it.version,
                 managed = consumerUpdateRequest.managed ?: it.managed,
-                resources = consumerUpdateRequest.resources ?: it.resources,
-                writeableResources = consumerUpdateRequest.writeableResources ?: it.writeableResources,
-                cacheDisabledResources = consumerUpdateRequest.cacheDisabledResources ?: it.cacheDisabledResources,
+                resources = consumerUpdateRequest.resources ?: it.resources.map { s -> s.lowercase() },
+                writeableResources = consumerUpdateRequest.writeableResources
+                    ?: it.writeableResources.map { s -> s.lowercase() },
+                cacheDisabledResources = consumerUpdateRequest.cacheDisabledResources
+                    ?: it.cacheDisabledResources.map { s -> s.lowercase() },
             )
         }
 

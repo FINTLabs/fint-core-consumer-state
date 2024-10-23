@@ -20,13 +20,13 @@ data class ConsumerEntity(
 ) : ConsumerIdentification, ConsumerProperties {
     constructor(consumerRequest: ConsumerRequest) : this(
         id = "${consumerRequest.domain}-${consumerRequest.`package`}-${consumerRequest.org}",
-        domain = consumerRequest.domain,
-        `package` = consumerRequest.`package`,
-        org = consumerRequest.org,
+        domain = consumerRequest.domain.lowercase(),
+        `package` = consumerRequest.`package`.lowercase(),
+        org = consumerRequest.org.lowercase(),
         version = consumerRequest.version,
         managed = consumerRequest.managed,
-        resources = consumerRequest.resources,
-        writeableResources = consumerRequest.writeableResources,
-        cacheDisabledResources = consumerRequest.cacheDisabledResources
+        resources = consumerRequest.resources.map { it.lowercase() },
+        writeableResources = consumerRequest.writeableResources.map { it.lowercase() },
+        cacheDisabledResources = consumerRequest.cacheDisabledResources.map { it.lowercase() }
     )
 }
