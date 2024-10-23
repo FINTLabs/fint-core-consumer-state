@@ -24,7 +24,7 @@ class MetadataRepository(
         componentToResourceMap.containsKey(createComponentKey(domain, `package`))
 
     fun resourceBelongsToComponent(domain: String, `package`: String, resource: String) =
-        componentToResourceMap.getOrDefault(createComponentKey(domain, `package`), mutableSetOf()).contains(resource)
+        componentToResourceMap.getOrDefault(createComponentKey(domain, `package`), mutableSetOf()).contains(resource.lowercase())
 
     private fun createComponentKey(domain: String, `package`: String) = "${domain.lowercase()}-${`package`.lowercase()}"
 
