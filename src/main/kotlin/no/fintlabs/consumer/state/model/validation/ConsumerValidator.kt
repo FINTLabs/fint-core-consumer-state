@@ -45,6 +45,9 @@ class ConsumerValidator(
     // TODO: Implement org validation
     private fun validateOrganization(org: String) = true
 
-    private fun validateVersion(version: String) = versionRepository.versionExists(version)
+    private fun validateVersion(version: String) {
+        if (!versionRepository.versionExists(version))
+            throw InvalidConsumerException("Version: $version does not exist")
+    }
 
 }
