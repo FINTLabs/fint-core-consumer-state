@@ -1,0 +1,20 @@
+apiVersion: fintlabs.no/v1alpha1
+kind: Application
+metadata:
+  name: fint-core-consumer-state
+  namespace: fint-core
+spec:
+  port: 8080
+  image: ghcr.io/fintlabs/fint-core-consumer-state:latest
+  database:
+    database: fint-core
+  env:
+    - name: JAVA_TOOL_OPTIONS
+      value: '-XX:+ExitOnOutOfMemoryError -Xmx425M'
+  resources:
+    limits:
+      memory: "500Mi"
+      cpu: "500m"
+    requests:
+      memory: "128Mi"
+      cpu: "100m"
