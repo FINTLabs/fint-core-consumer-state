@@ -17,6 +17,5 @@ class VersionFetcher {
             .retrieve()
             .bodyToFlux(Release::class.java)
             .collectList()
-            .doOnSuccess { println("WHAT: $it") }
 
 }
