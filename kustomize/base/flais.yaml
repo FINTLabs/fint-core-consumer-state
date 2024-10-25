@@ -4,6 +4,7 @@ metadata:
   name: fint-core-consumer-state
   namespace: fint-core
 spec:
+  orgId: fintlabs.no
   port: 8080
   image: ghcr.io/fintlabs/fint-core-consumer-state:latest
   database:
