@@ -1,6 +1,7 @@
 package no.fintlabs.consumer.state.model.validation
 
 import no.fintlabs.consumer.state.exception.InvalidConsumerException
+import no.fintlabs.consumer.state.github.VersionRepository
 import no.fintlabs.consumer.state.metadata.MetadataRepository
 import no.fintlabs.consumer.state.model.ConsumerRequest
 import no.fintlabs.consumer.state.model.ConsumerUpdateRequest
@@ -9,7 +10,8 @@ import org.springframework.stereotype.Service
 
 @Service
 class ConsumerValidator(
-    val metadataRepository: MetadataRepository
+    val metadataRepository: MetadataRepository,
+    val versionRepository: VersionRepository
 ) {
 
     fun validateRequest(consumerRequest: ConsumerRequest) =
@@ -22,7 +24,7 @@ class ConsumerValidator(
         validateComponent(domain, `package`)
         validateOrganization(org)
 
-        consumerProperties.version?.let { validateVersion(domain, `package`, it) }
+        consumerProperties.version?.let { validateVersion(it) }
         consumerProperties.resources?.let { validateResources(domain, `package`, "resources", it) }
         consumerProperties.writeableResources?.let { validateResources(domain, `package`, "writeableResources", it) }
         consumerProperties.cacheDisabledResources?.let { validateResources(domain, `package`, "cacheDisabledResources", it) }
@@ -43,7 +45,6 @@ class ConsumerValidator(
     // TODO: Implement org validation
     private fun validateOrganization(org: String) = true
 
-    // TODO: Implement version validation
-    private fun validateVersion(domain: String, `package`: String, version: String) = true
+    private fun validateVersion(version: String) = versionRepository.versionExists(version)
 
 }
