@@ -13,7 +13,7 @@ import org.springframework.web.server.ServerWebExchange
 import java.net.URI
 
 @RestController
-@RequestMapping("/consumer-state")
+@RequestMapping("/consumer")
 class ConsumerStateController(
     val consumerStateService: ConsumerStateService,
     val consumerValidator: ConsumerValidator
