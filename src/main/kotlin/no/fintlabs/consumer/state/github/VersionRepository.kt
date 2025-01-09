@@ -15,7 +15,7 @@ class VersionRepository(
     @PostConstruct
     fun populateVersions() =
         versionFetcher.getReleases().subscribe{
-            it.forEach { release -> versions.add(release.name) }
+            it.forEach { release -> versions.add(release.name.replace("v", "")) }
         }
 
 }
