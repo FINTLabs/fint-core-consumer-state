@@ -28,7 +28,7 @@ class ConsumerStateController(
     fun addConsumer(
         @RequestBody consumerRequest: ConsumerRequest,
         webExchange: ServerWebExchange
-    ): ResponseEntity<ConsumerIdentification> {
+    ): ResponseEntity<ConsumerEntity> {
         consumerValidator.validateRequest(consumerRequest)
         return consumerStateService.saveConsumer(consumerRequest).let {
             webhookService.callBack(it)

@@ -14,7 +14,7 @@ class ConsumerStateService(
 
     fun getConsumers(): Collection<ConsumerEntity> = consumerStateRepository.findAll()
 
-    fun saveConsumer(consumerRequest: ConsumerRequest): ConsumerIdentification {
+    fun saveConsumer(consumerRequest: ConsumerRequest): ConsumerEntity {
         return consumerStateRepository.save(ConsumerEntity(consumerRequest))
     }
 
