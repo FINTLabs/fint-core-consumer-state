@@ -12,4 +12,19 @@ data class ConsumerRequest(
     override val writeableResources: List<String> = mutableListOf(),
     override val cacheDisabledResources: List<String> = mutableListOf(),
     override val managed: Boolean = true,
-) : ConsumerIdentification, ConsumerProperties
+    val operation: Operation?
+) : ConsumerIdentification, ConsumerProperties {
+    companion object {
+        fun fromEntity(consumerEntity: ConsumerEntity, operation: Operation) = ConsumerRequest(
+            consumerEntity.domain,
+            consumerEntity.`package`,
+            consumerEntity.org,
+            consumerEntity.version,
+            consumerEntity.resources,
+            consumerEntity.writeableResources,
+            consumerEntity.cacheDisabledResources,
+            consumerEntity.managed,
+            operation
+        )
+    }
+}
