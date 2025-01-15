@@ -1,5 +1,8 @@
 package no.fintlabs.consumer.state.webhook
 
+import no.fintlabs.consumer.state.model.ConsumerEntity
+import no.fintlabs.consumer.state.model.ConsumerRequest
+import no.fintlabs.consumer.state.model.Operation
 import org.springframework.stereotype.Service
 import org.springframework.web.reactive.function.client.WebClient
 
@@ -11,10 +14,10 @@ class WebhookService(
 
     fun addCallback(ip: String) = callbacks.add(ip)
 
-    fun callBack(any: Any) = callbacks.forEach {
+    fun callBack(consumerEntity: ConsumerEntity, operation: Operation) = callbacks.forEach {
         webClient.post()
             .uri(it)
-            .body(any, Any::class.java)
+            .body(ConsumerRequest.fromEntity(consumerEntity, operation), ConsumerRequest::class.java)
     }
 
 }
