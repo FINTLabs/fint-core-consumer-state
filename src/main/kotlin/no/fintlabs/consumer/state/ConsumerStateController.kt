@@ -3,7 +3,7 @@ package no.fintlabs.consumer.state
 import no.fintlabs.consumer.state.model.ConsumerEntity
 import no.fintlabs.consumer.state.model.ConsumerRequest
 import no.fintlabs.consumer.state.model.ConsumerUpdateRequest
-import no.fintlabs.consumer.state.model.interfaces.ConsumerIdentification
+import no.fintlabs.consumer.state.model.Operation
 import no.fintlabs.consumer.state.model.validation.ConsumerValidator
 import no.fintlabs.consumer.state.webhook.WebhookService
 import org.springframework.http.HttpStatus
@@ -31,7 +31,7 @@ class ConsumerStateController(
     ): ResponseEntity<ConsumerEntity> {
         consumerValidator.validateRequest(consumerRequest)
         return consumerStateService.saveConsumer(consumerRequest).let {
-            webhookService.callBack(it)
+            webhookService.callBack(it, Operation.CREATE)
             ResponseEntity.created(URI.create("${webExchange.request.uri}${it.domain}")).body(it)
         }
     }
@@ -43,7 +43,7 @@ class ConsumerStateController(
     ): ResponseEntity<ConsumerEntity> {
         consumerValidator.validateUpdateRequest(id, consumerUpdateRequest)
         return consumerStateService.updateConsumer(id, consumerUpdateRequest).map {
-            webhookService.callBack(it)
+            webhookService.callBack(it, Operation.UPDATE)
             ResponseEntity.ok(it)
         }.orElseThrow {
             ResponseStatusException(HttpStatus.NOT_FOUND, "Consumer id not found: $id")
@@ -53,7 +53,7 @@ class ConsumerStateController(
     @DeleteMapping("/{id}")
     fun deleteConsumer(@PathVariable id: String): ResponseEntity<Void> =
         consumerStateService.deleteConsumer(id).map {
-            webhookService.callBack(it)
+            webhookService.callBack(it, Operation.DELETE)
             ResponseEntity.noContent().build<Void>()
         }.orElseThrow { ResponseStatusException(HttpStatus.NOT_FOUND) }
 
