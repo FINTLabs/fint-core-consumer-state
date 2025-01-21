@@ -1,11 +1,8 @@
 package no.fintlabs.consumer.state
 
-import no.fintlabs.consumer.state.model.ConsumerEntity
 import no.fintlabs.consumer.state.model.ConsumerRequest
 import no.fintlabs.consumer.state.model.ConsumerUpdateRequest
-import no.fintlabs.consumer.state.model.Operation
-import no.fintlabs.consumer.state.model.validation.ConsumerValidator
-import no.fintlabs.consumer.state.webhook.WebhookService
+import no.fintlabs.consumer.state.repository.ConsumerEntity
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
@@ -15,11 +12,7 @@ import java.net.URI
 
 @RestController
 @RequestMapping("/consumer")
-class ConsumerStateController(
-    private val consumerStateService: ConsumerStateService,
-    private val consumerValidator: ConsumerValidator,
-    private val webhookService: WebhookService
-) {
+class ConsumerStateController(private val consumerStateService: ConsumerStateService) {
 
     @GetMapping
     fun getConsumers(): Collection<ConsumerEntity> = consumerStateService.getConsumers()
@@ -28,34 +21,27 @@ class ConsumerStateController(
     fun addConsumer(
         @RequestBody consumerRequest: ConsumerRequest,
         webExchange: ServerWebExchange
-    ): ResponseEntity<ConsumerEntity> {
-        consumerValidator.validateRequest(consumerRequest)
-        return consumerStateService.saveConsumer(consumerRequest).let {
-            webhookService.callBack(it, Operation.CREATE)
-            ResponseEntity.created(URI.create("${webExchange.request.uri}${it.domain}")).body(it)
+    ): ResponseEntity<ConsumerEntity> =
+        consumerStateService.saveConsumer(consumerRequest).let { (entity, wasCreated) ->
+            when (wasCreated) {
+                true -> ResponseEntity.created(URI.create("${webExchange.request.uri}/${entity.id}")).body(entity)
+                false -> ResponseEntity.status(HttpStatus.CONFLICT).body(entity)
+            }
         }
-    }
 
     @PutMapping("/{id}")
     fun updateConsumer(
         @PathVariable id: String,
         @RequestBody consumerUpdateRequest: ConsumerUpdateRequest
     ): ResponseEntity<ConsumerEntity> {
-        consumerValidator.validateUpdateRequest(id, consumerUpdateRequest)
-        return consumerStateService.updateConsumer(id, consumerUpdateRequest).map {
-            webhookService.callBack(it, Operation.UPDATE)
-            ResponseEntity.ok(it)
-        }.orElseThrow {
-            ResponseStatusException(HttpStatus.NOT_FOUND, "Consumer id not found: $id")
-        }
+        return consumerStateService.updateConsumer(id, consumerUpdateRequest).map { ResponseEntity.ok(it) }
+            .orElseThrow { ResponseStatusException(HttpStatus.NOT_FOUND, "Consumer id not found: $id") }
     }
 
     @DeleteMapping("/{id}")
     fun deleteConsumer(@PathVariable id: String): ResponseEntity<Void> =
-        consumerStateService.deleteConsumer(id).map {
-            webhookService.callBack(it, Operation.DELETE)
-            ResponseEntity.noContent().build<Void>()
-        }.orElseThrow { ResponseStatusException(HttpStatus.NOT_FOUND) }
+        consumerStateService.deleteConsumer(id).map { ResponseEntity.noContent().build<Void>() }
+            .orElseThrow { ResponseStatusException(HttpStatus.NOT_FOUND) }
 
     // TODO: Temporary, get rid of this in production
     @PatchMapping
