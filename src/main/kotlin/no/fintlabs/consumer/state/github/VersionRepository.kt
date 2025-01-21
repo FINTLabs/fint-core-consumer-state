@@ -8,7 +8,7 @@ class VersionRepository(
     val versionFetcher: VersionFetcher
 ) {
 
-    val versions: MutableSet<String> = hashSetOf()
+    private val versions: MutableSet<String> = hashSetOf()
 
     fun versionExists(version: String) = versions.contains(version)
 
