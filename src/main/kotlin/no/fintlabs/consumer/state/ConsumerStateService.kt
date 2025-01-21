@@ -1,33 +1,43 @@
 package no.fintlabs.consumer.state
 
-import no.fintlabs.consumer.state.model.ConsumerEntity
+import no.fintlabs.consumer.state.interfaces.ConsumerFields
 import no.fintlabs.consumer.state.model.ConsumerRequest
-import no.fintlabs.consumer.state.model.ConsumerUpdateRequest
-import no.fintlabs.consumer.state.model.interfaces.ConsumerIdentification
+import no.fintlabs.consumer.state.repository.ConsumerEntity
+import no.fintlabs.consumer.state.repository.ConsumerEntity.Companion.createId
+import no.fintlabs.consumer.state.repository.ConsumerEntity.Companion.fromRequest
+import no.fintlabs.consumer.state.repository.ConsumerStateRepository
+import no.fintlabs.webhook.server.WebHookServerService
 import org.springframework.stereotype.Service
 import java.util.*
 
 @Service
 class ConsumerStateService(
-    val consumerStateRepository: ConsumerStateRepository,
+    private val consumerStateRepository: ConsumerStateRepository,
+    private val webHookServerService: WebHookServerService
 ) {
 
     fun getConsumers(): Collection<ConsumerEntity> = consumerStateRepository.findAll()
 
-    fun saveConsumer(consumerRequest: ConsumerRequest): ConsumerEntity {
-        return consumerStateRepository.save(ConsumerEntity(consumerRequest))
-    }
+    fun saveConsumer(consumerRequest: ConsumerRequest): Pair<ConsumerEntity, Boolean> =
+        consumerStateRepository.findById(createId(consumerRequest))
+            .map { it to false }
+            .orElseGet {
+                val entity = consumerStateRepository.save(fromRequest(consumerRequest))
+                webHookServerService.callback(entity)
+                entity to true
+            }
 
-    fun updateConsumer(id: String, consumerUpdateRequest: ConsumerUpdateRequest): Optional<ConsumerEntity> =
+    fun updateConsumer(id: String, consumerUpdate: ConsumerFields): Optional<ConsumerEntity> =
         consumerStateRepository.findById(id).map {
             it.copy(
-                version = consumerUpdateRequest.version ?: it.version,
-                managed = consumerUpdateRequest.managed ?: it.managed,
-                resources = consumerUpdateRequest.resources ?: it.resources.map { s -> s.lowercase() },
-                writeableResources = consumerUpdateRequest.writeableResources
-                    ?: it.writeableResources.map { s -> s.lowercase() },
-                cacheDisabledResources = consumerUpdateRequest.cacheDisabledResources
-                    ?: it.cacheDisabledResources.map { s -> s.lowercase() },
+                version = consumerUpdate.version ?: it.version,
+                managed = consumerUpdate.managed ?: it.managed,
+                resources = consumerUpdate.resources ?: it.resources.map { s -> s.lowercase() },
+                podResources = consumerUpdate.podResources ?: it.podResources,
+                writeableResources =
+                consumerUpdate.writeableResources ?: it.writeableResources.map { s -> s.lowercase() },
+                cacheDisabledResources =
+                consumerUpdate.cacheDisabledResources ?: it.cacheDisabledResources.map { s -> s.lowercase() },
             )
         }
 
