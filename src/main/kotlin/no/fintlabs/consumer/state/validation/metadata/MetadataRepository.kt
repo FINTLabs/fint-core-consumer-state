@@ -1,4 +1,4 @@
-package no.fintlabs.consumer.state.metadata
+package no.fintlabs.consumer.state.validation.metadata
 
 import jakarta.annotation.PostConstruct
 import org.springframework.stereotype.Repository
@@ -6,10 +6,10 @@ import java.util.concurrent.ConcurrentHashMap
 
 @Repository
 class MetadataRepository(
-    val metadataFetcher: MetadataFetcher
+    private val metadataFetcher: MetadataFetcher
 ) {
 
-    val componentToResourceMap: ConcurrentHashMap<String, MutableSet<String>> = ConcurrentHashMap()
+    private val componentToResourceMap: ConcurrentHashMap<String, MutableSet<String>> = ConcurrentHashMap()
 
     @PostConstruct
     fun populateComponentToResourceMap() =

@@ -1,4 +1,4 @@
-package no.fintlabs.consumer.state.metadata
+package no.fintlabs.consumer.state.validation.metadata
 
 import com.fasterxml.jackson.annotation.JsonInclude
 

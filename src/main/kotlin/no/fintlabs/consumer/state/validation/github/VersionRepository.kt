@@ -1,4 +1,4 @@
-package no.fintlabs.consumer.state.github
+package no.fintlabs.consumer.state.validation.github
 
 import jakarta.annotation.PostConstruct
 import org.springframework.stereotype.Repository

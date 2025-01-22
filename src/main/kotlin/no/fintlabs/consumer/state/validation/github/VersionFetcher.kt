@@ -1,4 +1,4 @@
-package no.fintlabs.consumer.state.github
+package no.fintlabs.consumer.state.validation.github
 
 import org.springframework.stereotype.Service
 import org.springframework.web.reactive.function.client.WebClient

@@ -1,4 +1,4 @@
-package no.fintlabs.consumer.state.github
+package no.fintlabs.consumer.state.validation.github
 
 import com.fasterxml.jackson.annotation.JsonProperty
 
