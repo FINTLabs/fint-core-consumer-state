@@ -7,7 +7,7 @@ plugins {
 }
 
 group = 'no.fintlabs'
-version = '0.0.1-SNAPSHOT'
+version = project.hasProperty('version') ? project.property('version') : "0.0.1-SNAPSHOT"
 
 java {
 	toolchain {
@@ -28,8 +28,8 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-webflux'
 	implementation 'org.springframework.boot:spring-boot-starter-validation'
 
-	implementation 'no.fintlabs:fint-core-webhook:0.0.1-SNAPSHOT'
-	implementation 'no.fintlabs:fint-core-consumer-state-library:0.0.1-SNAPSHOT'
+	implementation 'no.fintlabs:fint-core-webhook:1.0.0'
+	implementation 'no.fintlabs:fint-core-consumer-state-library:1.0.0'
 
 	implementation 'com.fasterxml.jackson.module:jackson-module-kotlin'
 	implementation 'io.projectreactor.kotlin:reactor-kotlin-extensions'
