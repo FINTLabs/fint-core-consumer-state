@@ -1,8 +1,9 @@
 package no.fintlabs.consumer.state
 
 import no.fintlabs.consumer.state.model.ConsumerRequest
-import no.fintlabs.consumer.state.model.ConsumerUpdateRequest
 import no.fintlabs.consumer.state.repository.ConsumerEntity
+import no.fintlabs.consumer.state.model.ConsumerUpdateRequest
+import no.fintlabs.consumer.state.validation.ConsumerValidationService
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
@@ -12,7 +13,10 @@ import java.net.URI
 
 @RestController
 @RequestMapping("/consumer")
-class ConsumerStateController(private val consumerStateService: ConsumerStateService) {
+class ConsumerStateController(
+    private val consumerStateService: ConsumerStateService,
+    private val consumerValidationService: ConsumerValidationService
+) {
 
     @GetMapping
     fun getConsumers(): Collection<ConsumerEntity> = consumerStateService.getConsumers()
@@ -21,19 +25,23 @@ class ConsumerStateController(private val consumerStateService: ConsumerStateSer
     fun addConsumer(
         @RequestBody consumerRequest: ConsumerRequest,
         webExchange: ServerWebExchange
-    ): ResponseEntity<ConsumerEntity> =
-        consumerStateService.saveConsumer(consumerRequest).let { (entity, wasCreated) ->
+    ): ResponseEntity<ConsumerEntity> {
+        consumerValidationService.validateRequest(consumerRequest)
+        return consumerStateService.saveConsumer(consumerRequest).let { (entity, wasCreated) ->
             when (wasCreated) {
                 true -> ResponseEntity.created(URI.create("${webExchange.request.uri}/${entity.id}")).body(entity)
                 false -> ResponseEntity.status(HttpStatus.CONFLICT).body(entity)
             }
         }
+    }
+
 
     @PutMapping("/{id}")
     fun updateConsumer(
         @PathVariable id: String,
         @RequestBody consumerUpdateRequest: ConsumerUpdateRequest
     ): ResponseEntity<ConsumerEntity> {
+        consumerValidationService.validateConsumerFields(id, consumerUpdateRequest)
         return consumerStateService.updateConsumer(id, consumerUpdateRequest).map { ResponseEntity.ok(it) }
             .orElseThrow { ResponseStatusException(HttpStatus.NOT_FOUND, "Consumer id not found: $id") }
     }
