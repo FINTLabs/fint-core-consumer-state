@@ -42,7 +42,6 @@ class ConsumerValidationService(
 
         val validResources = validateResources(domain, `package`, consumer)
 
-        logger.info("Valid resources: $validResources - $domain $`package`")
         if (!validResources) {
             throw ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid resources")
         }
