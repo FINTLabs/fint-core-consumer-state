@@ -26,13 +26,13 @@ data class ConsumerEntity(
     )
     override val podResources: PodResources,
 
-    @ElementCollection
+    @ElementCollection(fetch = FetchType.EAGER)
     override val resources: List<String>,
 
-    @ElementCollection
+    @ElementCollection(fetch = FetchType.EAGER)
     override val writeableResources: List<String>,
 
-    @ElementCollection
+    @ElementCollection(fetch = FetchType.EAGER)
     override val cacheDisabledResources: List<String>
 ) : ConsumerIdentificator, ConsumerFields {
     companion object {
