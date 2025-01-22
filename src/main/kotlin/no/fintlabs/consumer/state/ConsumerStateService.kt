@@ -29,15 +29,17 @@ class ConsumerStateService(
 
     fun updateConsumer(id: String, consumerUpdate: ConsumerFields): Optional<ConsumerEntity> =
         consumerStateRepository.findById(id).map {
-            it.copy(
-                version = consumerUpdate.version ?: it.version,
-                managed = consumerUpdate.managed ?: it.managed,
-                resources = consumerUpdate.resources ?: it.resources.map { s -> s.lowercase() },
-                podResources = consumerUpdate.podResources ?: it.podResources,
-                writeableResources =
-                consumerUpdate.writeableResources ?: it.writeableResources.map { s -> s.lowercase() },
-                cacheDisabledResources =
-                consumerUpdate.cacheDisabledResources ?: it.cacheDisabledResources.map { s -> s.lowercase() },
+            consumerStateRepository.save(
+                it.copy(
+                    version = consumerUpdate.version ?: it.version,
+                    managed = consumerUpdate.managed ?: it.managed,
+                    resources = consumerUpdate.resources ?: it.resources.map { s -> s.lowercase() },
+                    podResources = consumerUpdate.podResources ?: it.podResources,
+                    writeableResources =
+                    consumerUpdate.writeableResources ?: it.writeableResources.map { s -> s.lowercase() },
+                    cacheDisabledResources =
+                    consumerUpdate.cacheDisabledResources ?: it.cacheDisabledResources.map { s -> s.lowercase() },
+                )
             )
         }
 
