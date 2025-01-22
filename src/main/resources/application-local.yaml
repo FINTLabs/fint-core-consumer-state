@@ -1,5 +1,7 @@
 fint:
-  metamodel: http://localhost:8082
+  endpoints:
+    metamodel: http://localhost:8081
+    admin: http://localhost:8082
 spring:
   datasource:
     url: jdbc:postgresql://localhost:5432/postgres
