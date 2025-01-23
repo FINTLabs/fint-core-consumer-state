@@ -58,7 +58,7 @@ jobs:
           - fint-core
         cluster:
           - aks-api-fint-2022-02-08
-#          - aks-beta-fint-2021-11-23
+          - aks-beta-fint-2021-11-23
 #          - aks-alpha-fint-2021-11-18
 #          - aks-pwf-fint-2021-10-20
 
@@ -85,7 +85,7 @@ jobs:
         uses: azure/k8s-bake@v2
         with:
           renderEngine: 'kustomize'
-          kustomizationPath: 'kustomize/base'
+          kustomizationPath: 'kustomize/overlays/${{ steps.environment.outputs.result }}'
 
       - uses: azure/login@v1
         with:
