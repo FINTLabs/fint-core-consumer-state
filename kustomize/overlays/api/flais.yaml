@@ -1,0 +1,21 @@
+apiVersion: fintlabs.no/v1alpha1
+kind: Application
+metadata:
+  name: fint-core-consumer-state
+  namespace: fint-core
+spec:
+  orgId: fintlabs.no
+  port: 8080
+  image: ghcr.io/fintlabs/fint-core-consumer-state:latest
+  env:
+    - name: JAVA_TOOL_OPTIONS
+      value: '-XX:+ExitOnOutOfMemoryError -Xmx425M'
+    - name: fint.endpoints.admin
+      value: http://admin-portal.default.svc.cluster.local:8081
+  resources:
+    limits:
+      memory: "500Mi"
+      cpu: "500m"
+    requests:
+      memory: "128Mi"
+      cpu: "100m"
