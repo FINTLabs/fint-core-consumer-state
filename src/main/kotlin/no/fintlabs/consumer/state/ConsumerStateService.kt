@@ -2,6 +2,8 @@ package no.fintlabs.consumer.state
 
 import no.fintlabs.consumer.state.interfaces.ConsumerFields
 import no.fintlabs.consumer.state.model.ConsumerRequest
+import no.fintlabs.consumer.state.model.ConsumerResponse
+import no.fintlabs.consumer.state.model.Operation
 import no.fintlabs.consumer.state.repository.ConsumerEntity
 import no.fintlabs.consumer.state.repository.ConsumerEntity.Companion.createId
 import no.fintlabs.consumer.state.repository.ConsumerEntity.Companion.fromRequest
@@ -16,36 +18,18 @@ class ConsumerStateService(
     private val webHookServerService: WebHookServerService
 ) {
 
-    fun getConsumers(): Collection<ConsumerEntity> = consumerStateRepository.findAll()
+    fun getConsumers(): Collection<ConsumerEntity> = consumerStateRepository.cache.values
 
-    fun saveConsumer(consumerRequest: ConsumerRequest): Pair<ConsumerEntity, Boolean> =
-        consumerStateRepository.findById(createId(consumerRequest))
-            .map { it to false }
-            .orElseGet {
-                val entity = consumerStateRepository.save(fromRequest(consumerRequest))
-                webHookServerService.callback(entity)
-                entity to true
-            }
+    fun saveConsumer(consumerRequest: ConsumerRequest): ConsumerEntity {
+        val fromRequest = fromRequest(consumerRequest)
+        consumerStateRepository.cache[createId(consumerRequest)] = fromRequest
+        webHookServerService.callback(ConsumerResponse(
+            consumerRequest,
+            Operation.CREATE
+        ))
+        return fromRequest
+    }
 
-    fun updateConsumer(id: String, consumerUpdate: ConsumerFields): Optional<ConsumerEntity> =
-        consumerStateRepository.findById(id).map {
-            consumerStateRepository.save(
-                it.copy(
-                    version = consumerUpdate.version ?: it.version,
-                    managed = consumerUpdate.managed ?: it.managed,
-                    resources = consumerUpdate.resources ?: it.resources.map { s -> s.lowercase() },
-                    podResources = consumerUpdate.podResources ?: it.podResources,
-                    writeableResources =
-                    consumerUpdate.writeableResources ?: it.writeableResources.map { s -> s.lowercase() },
-                    cacheDisabledResources =
-                    consumerUpdate.cacheDisabledResources ?: it.cacheDisabledResources.map { s -> s.lowercase() },
-                )
-            )
-        }
-
-    fun resetAllData() = consumerStateRepository.deleteAll()
-
-    fun deleteConsumer(id: String): Optional<ConsumerEntity> =
-        consumerStateRepository.findById(id).also { it.ifPresent(consumerStateRepository::delete) }
+    fun resetAllData() = consumerStateRepository.cache.clear()
 
 }

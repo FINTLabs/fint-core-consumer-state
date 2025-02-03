@@ -6,7 +6,7 @@ metadata:
 spec:
   orgId: fintlabs.no
   port: 8080
-  image: ghcr.io/fintlabs/fint-core-consumer-state:latest
+  image: ghcr.io/fintlabs/fint-core-consumer-state-mock:latest
   database:
     database: fint-core
   env:

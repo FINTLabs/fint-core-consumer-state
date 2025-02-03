@@ -1,6 +1,8 @@
 package no.fintlabs.consumer.state.repository
 
-import org.springframework.data.jpa.repository.JpaRepository
+import org.springframework.stereotype.Service
 
-interface ConsumerStateRepository : JpaRepository<ConsumerEntity, String> {
-}
+@Service
+class ConsumerStateRepository(
+    val cache: MutableMap<String, ConsumerEntity> = mutableMapOf()
+)
