@@ -32,8 +32,8 @@ class ConsumerStateService(
             consumerStateRepository.save(
                 it.copy(
                     version = consumerUpdate.version ?: it.version,
-                    managed = consumerUpdate.managed ?: it.managed,
                     resources = consumerUpdate.resources ?: it.resources.map { s -> s.lowercase() },
+                    shared = consumerUpdate.shared ?: it.shared,
                     podResources = consumerUpdate.podResources ?: it.podResources,
                     writeableResources =
                     consumerUpdate.writeableResources ?: it.writeableResources.map { s -> s.lowercase() },

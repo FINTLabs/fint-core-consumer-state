@@ -15,7 +15,7 @@ data class ConsumerEntity(
     override val `package`: String,
     override val org: String,
     override val version: String,
-    override val managed: Boolean,
+    override val shared: Boolean,
 
     @Embedded
     @AttributeOverrides(
@@ -42,7 +42,7 @@ data class ConsumerEntity(
             consumerRequest.`package`,
             consumerRequest.org,
             consumerRequest.version,
-            consumerRequest.managed,
+            consumerRequest.shared,
             consumerRequest.podResources,
             consumerRequest.resources,
             consumerRequest.writeableResources,
