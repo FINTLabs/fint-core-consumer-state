@@ -1,11 +1,11 @@
 package no.fintlabs
 
-import no.fintlabs.webhook.server.annotation.WebHookServer
+import no.fintlabs.webhook.server.annotation.WebhookServer
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.context.properties.ConfigurationPropertiesScan
 import org.springframework.boot.runApplication
 
-@WebHookServer
+@WebhookServer
 @ConfigurationPropertiesScan
 @SpringBootApplication
 class FintCoreConsumerStateApplication
