@@ -10,8 +10,14 @@ class OrganizationRepository(
 ) {
 
     @PostConstruct
-    private fun populateOrgNames() = organizationFetcher.getOrganizations().subscribe { orgNames.add(it.name) }
+    private fun populateOrgNames() =
+        organizationFetcher.getOrganizations()
+            .subscribe(
+                { orgNames.add(it.name) },
+                {  }
+            )
 
     fun orgExists(org: String) = orgNames.contains(org)
+    fun isEmpty() = orgNames.isEmpty()
 
 }
