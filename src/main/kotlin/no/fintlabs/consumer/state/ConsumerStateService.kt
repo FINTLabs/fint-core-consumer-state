@@ -6,14 +6,14 @@ import no.fintlabs.consumer.state.repository.ConsumerEntity
 import no.fintlabs.consumer.state.repository.ConsumerEntity.Companion.createId
 import no.fintlabs.consumer.state.repository.ConsumerEntity.Companion.fromRequest
 import no.fintlabs.consumer.state.repository.ConsumerStateRepository
-import no.fintlabs.webhook.server.WebHookServerService
+import no.fintlabs.webhook.server.WebhookServerService
 import org.springframework.stereotype.Service
 import java.util.*
 
 @Service
 class ConsumerStateService(
     private val consumerStateRepository: ConsumerStateRepository,
-    private val webHookServerService: WebHookServerService
+    private val webhookServerService: WebhookServerService
 ) {
 
     fun getConsumers(): Collection<ConsumerEntity> = consumerStateRepository.findAll()
@@ -23,7 +23,7 @@ class ConsumerStateService(
             .map { it to false }
             .orElseGet {
                 val entity = consumerStateRepository.save(fromRequest(consumerRequest))
-                webHookServerService.callback(entity)
+                webhookServerService.callback("consumer", entity)
                 entity to true
             }
 
