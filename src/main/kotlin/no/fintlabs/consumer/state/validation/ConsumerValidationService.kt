@@ -18,7 +18,7 @@ class ConsumerValidationService(
 ) {
 
     fun validateRequest(consumerRequest: ConsumerRequest) {
-        val validOrg = organizationRepository.orgExists(consumerRequest.org)
+        val validOrg = validateOrgName(consumerRequest.org)
         val validComponent = metadataRepository.containsComponent(consumerRequest.domain, consumerRequest.`package`)
 
         if (validOrg && validComponent) validateConsumerFields(createId(consumerRequest), consumerRequest)
@@ -42,6 +42,11 @@ class ConsumerValidationService(
             throw ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid resources")
         }
     }
+
+    fun validateOrgName(orgName: String): Boolean =
+        organizationRepository.isEmpty().takeIf { it }
+            ?.also { println("Organization is empty, therefore disabled org validation") }
+            ?: organizationRepository.orgExists(orgName)
 
     fun validateResources(domain: String, pkg: String, consumer: ConsumerFields) =
         listOfNotNull(
