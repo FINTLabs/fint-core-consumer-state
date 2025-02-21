@@ -6,9 +6,8 @@ import no.fintlabs.consumer.state.repository.ConsumerEntity.Companion.createId
 import no.fintlabs.consumer.state.validation.github.VersionRepository
 import no.fintlabs.consumer.state.validation.metadata.MetadataRepository
 import no.fintlabs.consumer.state.validation.organization.OrganizationRepository
-import org.springframework.http.HttpStatus
+import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
-import org.springframework.web.server.ResponseStatusException
 
 @Service
 class ConsumerValidationService(
@@ -17,30 +16,37 @@ class ConsumerValidationService(
     private val versionRepository: VersionRepository
 ) {
 
-    fun validateRequest(consumerRequest: ConsumerRequest) {
+    private val logger = LoggerFactory.getLogger(this::class.java)
+
+    fun validateRequest(consumerRequest: ConsumerRequest): Boolean {
         val validOrg = validateOrgName(consumerRequest.org)
         val validComponent = metadataRepository.containsComponent(consumerRequest.domain, consumerRequest.`package`)
 
-        if (validOrg && validComponent) validateConsumerFields(createId(consumerRequest), consumerRequest)
-        else throw ResponseStatusException(
-            HttpStatus.BAD_REQUEST,
-            "Invalid organization or component"
-        )
+        return if (organisationAndComponentIsValid(validOrg, validComponent))
+            validateConsumerFields(createId(consumerRequest), consumerRequest)
+        else false
     }
 
-    fun validateConsumerFields(id: String, consumer: ConsumerFields) {
+    fun organisationAndComponentIsValid(validOrg: Boolean, validComponent: Boolean) =
+        (validOrg && validComponent).also { logger.debug("validOrg: $validOrg validComponent: $validComponent") }
+
+    fun validateConsumerFields(id: String, consumer: ConsumerFields): Boolean {
         val (domain, `package`, _) = id.split("-")
         val validVersion = consumer.version?.let { versionRepository.versionExists(it) } ?: false
 
         if (!validVersion) {
-            throw ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid version")
+            logger.debug("Invalid version")
+            return false
         }
 
         val validResources = validateResources(domain, `package`, consumer)
 
         if (!validResources) {
-            throw ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid resources")
+            logger.debug("Invalid resources")
+            return false
         }
+
+        return true
     }
 
     fun validateOrgName(orgName: String): Boolean =
