@@ -18,6 +18,5 @@ class OrganizationRepository(
             )
 
     fun orgExists(org: String) = orgNames.contains(org)
-    fun isEmpty() = orgNames.isEmpty()
 
 }
