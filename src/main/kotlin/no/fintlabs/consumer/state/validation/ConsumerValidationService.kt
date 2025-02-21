@@ -52,14 +52,10 @@ class ConsumerValidationService(
     }
 
     fun validateOrgName(orgName: String): Boolean =
-        if (organizationRepository.isEmpty() || consumerStateValidationProperties.organisation.not()) {
-            logger.warn("Organisation validation is disabled due to: ${getValidationDisabledReason()}")
+        if (consumerStateValidationProperties.organisation.not()) {
+            logger.warn("Organisation validation is disabled due to configuration")
             true
         } else organizationRepository.orgExists(orgName)
-
-    private fun getValidationDisabledReason() =
-        if (organizationRepository.isEmpty()) "Organization repository is empty"
-        else "Configuration"
 
     fun validateResources(domain: String, pkg: String, consumer: ConsumerFields) =
         listOfNotNull(
