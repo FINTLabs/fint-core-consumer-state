@@ -2,7 +2,11 @@ fint:
   endpoints:
     metamodel: http://fint-core-consumer-metamodel:8080
 spring:
-  r2dbc:
+  flyway:
     url: ${fint.database.url}
+    user: ${fint.database.username}
+    password: ${fint.database.password}
+  r2dbc:
+    url: ${fint.database.r2dbc.url}
     username: ${fint.database.username}
     password: ${fint.database.password}
