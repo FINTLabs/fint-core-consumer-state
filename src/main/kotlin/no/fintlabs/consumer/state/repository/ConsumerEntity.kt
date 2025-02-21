@@ -1,8 +1,8 @@
 package no.fintlabs.consumer.state.repository
 
 import jakarta.persistence.*
+import no.fintlabs.consumer.state.interfaces.Consumer
 import no.fintlabs.consumer.state.interfaces.ConsumerFields
-import no.fintlabs.consumer.state.interfaces.ConsumerIdentificator
 import no.fintlabs.consumer.state.model.ConsumerRequest
 import no.fintlabs.consumer.state.model.PodResources
 
@@ -47,6 +47,17 @@ data class ConsumerEntity(
             consumerRequest.resources,
             consumerRequest.writeableResources,
             consumerRequest.cacheDisabledResources
+        )
+
+        fun update(consumerUpdate: ConsumerFields, existingEntity: ConsumerEntity) = existingEntity.copy(
+            version = consumerUpdate.version ?: existingEntity.version,
+            resources = consumerUpdate.resources ?: existingEntity.resources.map { it.lowercase() },
+            shared = consumerUpdate.shared ?: existingEntity.shared,
+            podResources = consumerUpdate.podResources ?: existingEntity.podResources,
+            writeableResources = consumerUpdate.writeableResources
+                ?: existingEntity.writeableResources.map { it.lowercase() },
+            cacheDisabledResources = consumerUpdate.cacheDisabledResources
+                ?: existingEntity.cacheDisabledResources.map { it.lowercase() }
         )
 
         fun createId(consumerRequest: ConsumerRequest) =
