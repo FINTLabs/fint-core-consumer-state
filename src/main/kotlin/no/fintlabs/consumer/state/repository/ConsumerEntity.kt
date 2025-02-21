@@ -34,7 +34,7 @@ data class ConsumerEntity(
 
     @ElementCollection(fetch = FetchType.EAGER)
     override val cacheDisabledResources: List<String>
-) : ConsumerIdentificator, ConsumerFields {
+) : Consumer {
     companion object {
         fun fromRequest(consumerRequest: ConsumerRequest) = ConsumerEntity(
             createId(consumerRequest),
