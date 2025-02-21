@@ -1,6 +1,6 @@
 package no.fintlabs.consumer.state.repository
 
-import org.springframework.data.jpa.repository.JpaRepository
+import org.springframework.data.repository.reactive.ReactiveCrudRepository
 
-interface ConsumerStateRepository : JpaRepository<ConsumerEntity, String> {
+interface ConsumerStateRepository : ReactiveCrudRepository<ConsumerEntity, String> {
 }
