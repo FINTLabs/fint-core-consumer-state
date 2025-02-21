@@ -31,17 +31,19 @@ dependencies {
 	implementation 'no.fintlabs:fint-core-webhook:2.0.0-rc-2'
 	implementation 'no.fintlabs:fint-core-consumer-state-library:1.4.1'
 
+	implementation("org.flywaydb:flyway-core")
+	implementation 'org.flywaydb:flyway-database-postgresql:11.3.3'
 	implementation 'jakarta.persistence:jakarta.persistence-api:3.1.0'
 	implementation 'com.fasterxml.jackson.module:jackson-module-kotlin'
 	implementation 'io.projectreactor.kotlin:reactor-kotlin-extensions'
 	implementation 'org.jetbrains.kotlin:kotlin-reflect'
 	implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-reactor'
+	runtimeOnly 'org.postgresql:r2dbc-postgresql'
 	runtimeOnly 'org.postgresql:postgresql'
 
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testImplementation 'io.projectreactor:reactor-test'
 	testImplementation 'org.jetbrains.kotlin:kotlin-test-junit5'
-	runtimeOnly 'org.postgresql:r2dbc-postgresql'
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 	testImplementation 'org.junit.jupiter:junit-jupiter:5.9.3'
 	testImplementation 'org.mockito.kotlin:mockito-kotlin:4.1.0'
