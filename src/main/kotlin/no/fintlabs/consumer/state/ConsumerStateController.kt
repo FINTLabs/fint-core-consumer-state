@@ -25,27 +25,30 @@ class ConsumerStateController(
     suspend fun addConsumer(
         @RequestBody consumerRequest: ConsumerRequest,
         webExchange: ServerWebExchange
-    ): ResponseEntity<ConsumerEntity> {
-        consumerValidationService.validateRequest(consumerRequest)
-        val (entity, wasCreated) = consumerStateService.saveConsumer(consumerRequest)
-        return if (wasCreated)
-            ResponseEntity.created(URI.create("${webExchange.request.uri}/${entity.id}")).body(entity)
-        else ResponseEntity.status(HttpStatus.CONFLICT).body(entity)
-    }
+    ): ResponseEntity<ConsumerEntity> =
+        consumerValidationService.validateRequest(consumerRequest).takeIf { it }?.let {
+            val (entity, wasCreated) = consumerStateService.saveConsumer(consumerRequest)
+
+            return if (wasCreated) ResponseEntity.created(createUri(webExchange, entity)).body(entity)
+            else ResponseEntity.status(HttpStatus.CONFLICT).body(entity)
+        } ?: ResponseEntity.badRequest().build()
 
     @PutMapping("/{id}")
     suspend fun updateConsumer(
         @PathVariable id: String,
         @RequestBody consumerUpdateRequest: ConsumerUpdateRequest
-    ): ResponseEntity<ConsumerEntity> {
-        consumerValidationService.validateConsumerFields(id, consumerUpdateRequest)
-        return consumerStateService.updateConsumer(id, consumerUpdateRequest)?.let { ResponseEntity.ok(it) }
-            ?: (ResponseEntity.notFound().build())
-    }
+    ): ResponseEntity<ConsumerEntity> =
+        consumerValidationService.validateConsumerFields(id, consumerUpdateRequest).takeIf { it }?.let {
+            consumerStateService.updateConsumer(id, consumerUpdateRequest)?.let { ResponseEntity.ok(it) }
+                ?: ResponseEntity.notFound().build()
+        } ?: ResponseEntity.badRequest().build()
 
     @DeleteMapping("/{id}")
     suspend fun deleteConsumer(@PathVariable id: String): ResponseEntity<Void> =
-        consumerStateService.deleteConsumer(id)?.let { ResponseEntity.noContent().build<Void>() }
-            ?: (ResponseEntity.notFound().build())
+        consumerStateService.deleteConsumer(id)?.let { ResponseEntity.noContent().build() }
+            ?: ResponseEntity.notFound().build()
+
+    private fun createUri(webExchange: ServerWebExchange, entity: ConsumerEntity) =
+        URI.create("${webExchange.request.uri}/${entity.id}")
 
 }
