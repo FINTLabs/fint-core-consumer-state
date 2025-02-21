@@ -19,7 +19,13 @@ class ConsumerStateController(
 ) {
 
     @GetMapping
-    fun getConsumers(): Flow<ConsumerEntity> = consumerStateService.getConsumers()
+    fun getConsumers(): Flow<ConsumerEntity> =
+        consumerStateService.getConsumers()
+
+    @GetMapping("/{id}")
+    suspend fun getConsumer(@PathVariable id: String) =
+        consumerStateService.getConsumer(id)?.let { ResponseEntity.ok(it) }
+            ?: ResponseEntity.notFound()
 
     @PostMapping
     suspend fun addConsumer(

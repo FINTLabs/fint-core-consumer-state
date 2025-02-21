@@ -54,4 +54,7 @@ class ConsumerStateService(
             ConsumerResponse(ConsumerRequest.fromConsumer(consumerEntity), operation)
         )
 
+    suspend fun getConsumer(id: String): ConsumerEntity? =
+        consumerStateRepository.findById(id).awaitSingleOrNull()
+
 }
