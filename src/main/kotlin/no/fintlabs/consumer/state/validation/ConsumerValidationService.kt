@@ -1,5 +1,6 @@
 package no.fintlabs.consumer.state.validation
 
+import no.fintlabs.consumer.state.config.ConsumerStateValidationProperties
 import no.fintlabs.consumer.state.interfaces.ConsumerFields
 import no.fintlabs.consumer.state.model.ConsumerRequest
 import no.fintlabs.consumer.state.repository.ConsumerEntity.Companion.createId
@@ -13,7 +14,8 @@ import org.springframework.stereotype.Service
 class ConsumerValidationService(
     private val organizationRepository: OrganizationRepository,
     private val metadataRepository: MetadataRepository,
-    private val versionRepository: VersionRepository
+    private val versionRepository: VersionRepository,
+    private val consumerStateValidationProperties: ConsumerStateValidationProperties
 ) {
 
     private val logger = LoggerFactory.getLogger(this::class.java)
@@ -50,9 +52,14 @@ class ConsumerValidationService(
     }
 
     fun validateOrgName(orgName: String): Boolean =
-        organizationRepository.isEmpty().takeIf { it }
-            ?.also { println("Organization is empty, therefore disabled org validation") }
-            ?: organizationRepository.orgExists(orgName)
+        if (organizationRepository.isEmpty() || consumerStateValidationProperties.organisation.not()) {
+            logger.warn("Organisation validation is disabled due to: ${getValidationDisabledReason()}")
+            true
+        } else organizationRepository.orgExists(orgName)
+
+    private fun getValidationDisabledReason() =
+        if (organizationRepository.isEmpty()) "Organization repository is empty"
+        else "Configuration"
 
     fun validateResources(domain: String, pkg: String, consumer: ConsumerFields) =
         listOfNotNull(
