@@ -1,12 +1,12 @@
 package no.fintlabs.consumer.state.repository
 
-import jakarta.persistence.*
 import no.fintlabs.consumer.state.interfaces.Consumer
 import no.fintlabs.consumer.state.interfaces.ConsumerFields
 import no.fintlabs.consumer.state.model.ConsumerRequest
-import no.fintlabs.consumer.state.model.PodResources
+import org.springframework.data.annotation.Id
+import org.springframework.data.relational.core.mapping.Table
 
-@Entity
+@Table("consumer_entity")
 data class ConsumerEntity(
     @Id
     val id: String,
@@ -16,23 +16,12 @@ data class ConsumerEntity(
     override val org: String,
     override val version: String,
     override val shared: Boolean,
-
-    @Embedded
-    @AttributeOverrides(
-        AttributeOverride(name = "limits.cpu", column = Column(name = "limits_cpu")),
-        AttributeOverride(name = "limits.memory", column = Column(name = "limits_memory")),
-        AttributeOverride(name = "requests.cpu", column = Column(name = "requests_cpu")),
-        AttributeOverride(name = "requests.memory", column = Column(name = "requests_memory"))
-    )
-    override val podResources: PodResources,
-
-    @ElementCollection(fetch = FetchType.EAGER)
+    override val limitsCpu: String,
+    override val limitsMemory: String,
+    override val requestsCpu: String,
+    override val requestsMemory: String,
     override val resources: List<String>,
-
-    @ElementCollection(fetch = FetchType.EAGER)
     override val writeableResources: List<String>,
-
-    @ElementCollection(fetch = FetchType.EAGER)
     override val cacheDisabledResources: List<String>
 ) : Consumer {
     companion object {
@@ -43,7 +32,10 @@ data class ConsumerEntity(
             consumerRequest.org,
             consumerRequest.version,
             consumerRequest.shared,
-            consumerRequest.podResources,
+            consumerRequest.limitsCpu,
+            consumerRequest.limitsMemory,
+            consumerRequest.requestsCpu,
+            consumerRequest.requestsMemory,
             consumerRequest.resources,
             consumerRequest.writeableResources,
             consumerRequest.cacheDisabledResources
@@ -51,9 +43,12 @@ data class ConsumerEntity(
 
         fun update(consumerUpdate: ConsumerFields, existingEntity: ConsumerEntity) = existingEntity.copy(
             version = consumerUpdate.version ?: existingEntity.version,
-            resources = consumerUpdate.resources ?: existingEntity.resources.map { it.lowercase() },
             shared = consumerUpdate.shared ?: existingEntity.shared,
-            podResources = consumerUpdate.podResources ?: existingEntity.podResources,
+            limitsCpu = consumerUpdate.limitsCpu ?: existingEntity.limitsCpu,
+            limitsMemory = consumerUpdate.limitsMemory ?: existingEntity.limitsMemory,
+            requestsCpu = consumerUpdate.requestsCpu ?: existingEntity.requestsCpu,
+            requestsMemory = consumerUpdate.requestsMemory ?: existingEntity.requestsMemory,
+            resources = consumerUpdate.resources ?: existingEntity.resources.map { it.lowercase() },
             writeableResources = consumerUpdate.writeableResources
                 ?: existingEntity.writeableResources.map { it.lowercase() },
             cacheDisabledResources = consumerUpdate.cacheDisabledResources
