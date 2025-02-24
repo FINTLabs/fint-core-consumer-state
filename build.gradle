@@ -29,7 +29,7 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-validation'
 
 	implementation 'no.fintlabs:fint-core-webhook:2.0.0-rc-2'
-	implementation 'no.fintlabs:fint-core-consumer-state-library:1.4.1'
+	implementation 'no.fintlabs:fint-core-consumer-state-library:2.0.0-rc-1'
 
 	implementation("org.flywaydb:flyway-core")
 	implementation 'org.flywaydb:flyway-database-postgresql:11.3.3'
