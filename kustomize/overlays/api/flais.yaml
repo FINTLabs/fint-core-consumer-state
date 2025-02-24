@@ -8,7 +8,7 @@ spec:
   port: 8080
   image: ghcr.io/fintlabs/fint-core-consumer-state:latest
   onePassword:
-    itemPath: "vaults/aks-beta-vault/items/fint-core-consumer-state"
+    itemPath: "vaults/aks-api-vault/items/fint-core-consumer-state"
   env:
     - name: JAVA_TOOL_OPTIONS
       value: '-XX:+ExitOnOutOfMemoryError -Xmx425M'
